@@ -1,7 +1,8 @@
 const express = require("express");
 const app = express();
+// app.use(express.json());
 
-const persons = [
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -22,6 +23,16 @@ const persons = [
     name: "Mary Json",
     number: "123-333333",
   },
+  {
+    id: 5,
+    name: "Mary Json",
+    number: "123-333333",
+  },
+  {
+    id: 6,
+    name: "Mary Json",
+    number: "123-333333",
+  },
 ];
 
 // get all persons
@@ -39,9 +50,17 @@ app.get("/info", (request, response) => {
 // single phonebook entry
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  console.log(`Return person with id ${id}`);
+  console.log(`return person with id ${id}`);
   const person = persons.find((person) => person.id === id);
   person ? response.json(person) : response.status(404).end();
+});
+
+// delete single entry
+app.delete("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  console.log(`delete id ${id}`);
+  persons = persons.filter((person) => person.id !== id);
+  response.status(204).end();
 });
 
 const PORT = 3001;
