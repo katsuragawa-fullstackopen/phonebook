@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-// app.use(express.json());
+app.use(express.json());
 
 let persons = [
   {
@@ -61,6 +61,30 @@ app.delete("/api/persons/:id", (request, response) => {
   console.log(`delete id ${id}`);
   persons = persons.filter((person) => person.id !== id);
   response.status(204).end();
+});
+
+// add entry with post request
+app.post("/api/persons", (request, response) => {
+  // create random id
+  const id = Math.floor(Math.random() * 100 ** 10);
+  console.log(`New person id ${id}`);
+  // check name and number content
+  if (!request.body.name || !request.body.number) {
+    response.status(400).json({ error: "Content missing" });
+  }
+  // check if it's a duplicate
+  if (persons.find((person) => person.name === request.body.name)) {
+    response.status(409).json({ error: "Name must be unique" });
+  }
+  // create new person object and add to persons list
+  const newPerson = {
+    id: id,
+    name: request.body.name,
+    number: request.body.number,
+  };
+  persons.push(newPerson);
+  // return persons
+  response.json(persons);
 });
 
 const PORT = 3001;
