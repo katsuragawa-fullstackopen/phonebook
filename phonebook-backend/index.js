@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const cors = require("cors");
+app.use(cors());
+
 const morgan = require("morgan");
 morgan.token("body", function (request, response) {
   return JSON.stringify(request.body);
@@ -28,16 +31,6 @@ let persons = [
   },
   {
     id: 4,
-    name: "Mary Json",
-    number: "123-333333",
-  },
-  {
-    id: 5,
-    name: "Mary Json",
-    number: "123-333333",
-  },
-  {
-    id: 6,
     name: "Mary Json",
     number: "123-333333",
   },
@@ -73,9 +66,6 @@ app.delete("/api/persons/:id", (request, response) => {
 
 // add entry with post request
 app.post("/api/persons", (request, response) => {
-  // create random id
-  const id = Math.floor(Math.random() * 100 ** 10);
-  console.log(`New person id ${id}`);
   // check name and number content
   if (!request.body.name || !request.body.number) {
     response.status(400).json({ error: "Content missing" });
@@ -86,7 +76,7 @@ app.post("/api/persons", (request, response) => {
   }
   // create new person object and add to persons list
   const newPerson = {
-    id: id,
+    id: request.body.id,
     name: request.body.name,
     number: request.body.number,
   };
@@ -95,7 +85,7 @@ app.post("/api/persons", (request, response) => {
   response.json(persons);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on PORT ${PORT}`);
 });

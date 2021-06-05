@@ -102,9 +102,8 @@ const App = () => {
       // else, add person to phonebook database
       phonebookServices
         .createContact(newPersonObject)
-        .then((createdContact) => {
-          console.log(`Add new person: ${createdContact.name}`);
-          setPersons(persons.concat(createdContact));
+        .then((returnedPersons) => {
+          setPersons(returnedPersons);
           setNewName("");
           setNewNumber("");
 
