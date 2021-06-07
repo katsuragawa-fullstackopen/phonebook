@@ -2,10 +2,13 @@
 /node_modules
 /.pnp
 .pnp.js
+.env
 
 # testing
 /coverage
+mongo.js
 
+/build
 
 # misc
 .DS_Store

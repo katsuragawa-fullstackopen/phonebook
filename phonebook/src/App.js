@@ -16,6 +16,7 @@ const App = () => {
 
   useEffect(() => {
     phonebookServices.getContacts().then((contacts) => setPersons(contacts));
+    console.log(typeof(persons));
   }, []);
 
   // change the input and set the newName
@@ -41,7 +42,6 @@ const App = () => {
     const newPersonObject = {
       name: newName,
       number: newNumber,
-      id: persons[persons.length - 1].id + 1,
     };
     console.log(`Created new person object ${newPersonObject.name}`);
 
@@ -77,7 +77,7 @@ const App = () => {
             setNewNumber("");
 
             setAlertMsg(`Updated contact ${newPersonObject.name}`);
-            setMsgStyle("add-message")
+            setMsgStyle("add-message");
             setTimeout(() => {
               setAlertMsg(null);
             }, 2000);
@@ -87,8 +87,10 @@ const App = () => {
             setNewName("");
             setNewNumber("");
 
-            setAlertMsg(`Sorry, the contact ${newPersonObject.name} was deleted from server`);
-            setMsgStyle("sorry-message")
+            setAlertMsg(
+              `Sorry, the contact ${newPersonObject.name} was deleted from server`
+            );
+            setMsgStyle("sorry-message");
             setTimeout(() => {
               setAlertMsg(null);
             }, 2000);
@@ -102,13 +104,15 @@ const App = () => {
       // else, add person to phonebook database
       phonebookServices
         .createContact(newPersonObject)
-        .then((returnedPersons) => {
-          setPersons(returnedPersons);
+        .then((returnedPerson) => {
+          console.log("returned to front end");
+          setPersons(persons.concat(returnedPerson));
+          console.log(persons);
           setNewName("");
           setNewNumber("");
 
           setAlertMsg(`Created new contact ${newPersonObject.name}`);
-          setMsgStyle("add-message")
+          setMsgStyle("add-message");
           setTimeout(() => {
             setAlertMsg(null);
           }, 2000);

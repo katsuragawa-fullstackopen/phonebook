@@ -2,6 +2,7 @@ import React from "react";
 
 const Persons = ({ persons, search, deletePerson }) => {
   // callback for filter
+  console.log("hi");
   const filterPerson = (person) =>
     person.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()) ||
     person.number.includes(search);

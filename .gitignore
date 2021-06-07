@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+/phonebook-backend/build
+
+mongo.js
+
 # testing
 /coverage
 
@@ -21,3 +25,5 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.env
