@@ -16,7 +16,6 @@ const App = () => {
 
   useEffect(() => {
     phonebookServices.getContacts().then((contacts) => setPersons(contacts));
-    console.log(typeof(persons));
   }, []);
 
   // change the input and set the newName
@@ -87,9 +86,7 @@ const App = () => {
             setNewName("");
             setNewNumber("");
 
-            setAlertMsg(
-              `Sorry, the contact ${newPersonObject.name} was deleted from server`
-            );
+            setAlertMsg(error.response.data.error);
             setMsgStyle("sorry-message");
             setTimeout(() => {
               setAlertMsg(null);
@@ -116,6 +113,15 @@ const App = () => {
           setTimeout(() => {
             setAlertMsg(null);
           }, 2000);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+
+          setAlertMsg(error.response.data.error);
+          setMsgStyle("sorry-message");
+          setTimeout(() => {
+            setAlertMsg(null);
+          }, 5000);
         });
     }
   };

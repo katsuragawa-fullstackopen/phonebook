@@ -10,7 +10,7 @@ app.use(express.static("build"));
 
 app.use(cors());
 
-morgan.token("body", function (request, response) {
+morgan.token("body", function (request) {
   return JSON.stringify(request.body);
 });
 app.use(
@@ -18,7 +18,7 @@ app.use(
 );
 
 // get all persons
-app.get("/api/persons", (request, response) => {
+app.get("/api/persons", (response) => {
   Person.find({}).then((persons) => {
     response.json(persons);
   });
@@ -49,7 +49,7 @@ app.get("/api/persons/:id", (request, response, next) => {
 // delete single entry
 app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end();
     })
     .catch((error) => next(error));
@@ -57,22 +57,22 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 // add entry with post request
 app.post("/api/persons", (request, response, next) => {
-  // check name and number content
-  if (!request.body.name || !request.body.number) {
-    response.status(400).json({ error: "Content missing" });
-  }
   // create new person object
   const newPerson = new Person({
     name: request.body.name,
     number: request.body.number,
   });
   console.log(`created ${newPerson}`);
+
   // save new contact
-  newPerson.save().then((savedPerson) => {
-    console.log("-------------");
-    console.log(JSON.stringify(savedPerson));
-    response.json(savedPerson);
-  });
+  newPerson
+    .save()
+    .then((savedPerson) => {
+      console.log("-------------");
+      console.log(JSON.stringify(savedPerson));
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 // update contact number
@@ -85,7 +85,11 @@ app.put("/api/persons/:id", (request, response, next) => {
 
   console.log(body.name, body.number, body.id);
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedPerson) => {
       console.log("Updated");
       response.json(updatedPerson);
@@ -100,10 +104,17 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 const errorHandler = (error, request, response, next) => {
-  console.log(error.message);
+  console.log("error name", error.name);
+
   if (error.name === "CastError") {
     return response.status(400).send({ error: "Malformatted id" });
+  } else if (error.name === "ValidationError") {
+    console.log("why");
+    return response
+      .status(409)
+      .send({ error: error.message, test: "why isnt 409?" });
   }
+
   next(error);
 };
 app.use(errorHandler);
