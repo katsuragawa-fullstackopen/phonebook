@@ -109,10 +109,9 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === "CastError") {
     return response.status(400).send({ error: "Malformatted id" });
   } else if (error.name === "ValidationError") {
-    console.log("why");
     return response
-      .status(409)
-      .send({ error: error.message, test: "why isnt 409?" });
+      .status(400)
+      .send({ error: error.message });
   }
 
   next(error);
